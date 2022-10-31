@@ -1,6 +1,5 @@
 import client.UserClient;
-import dto.CreateUserRequest;
-import org.apache.http.HttpStatus;
+import dto.UserCreateRequest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,20 +11,29 @@ public class UserLoginTest {
 
     private UserClient userClient;
 
+    private String token;
+
     @Before
     public void setUp() {
         userClient = new UserClient();
     }
 
     @Test
-    public void userShouldBeCreated() {
-
-        CreateUserRequest randomUser = getRandomUser();
-
-        userClient.createUser(randomUser)
+    public void userShouldBeLogged() {
+        // Создание валидного пользователя
+        UserCreateRequest randomUser = getRandomUser();
+        token =  userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");
+
+        userClient.loginUser(token)
+                .assertThat()
+                .statusCode(200);
+
+
     }
 }

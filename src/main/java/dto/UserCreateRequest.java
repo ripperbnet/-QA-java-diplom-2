@@ -1,12 +1,16 @@
 package dto;
 
-public class CreateUserRequest {
+public class UserCreateRequest {
 
     private String email;
 
     private String password;
 
     private String name;
+
+    private String accessToken;
+
+    private String refreshToken;
 
     public String getEmail() {
         return email;
