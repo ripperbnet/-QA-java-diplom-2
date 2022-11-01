@@ -1,5 +1,9 @@
 import client.UserClient;
 import dto.UserCreateRequest;
+import dto.UserLoginRequest;
+import generator.LoginUserRequestGenerator;
+import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,15 +16,26 @@ public class UserCreateTest {
 
     private UserClient userClient;
 
+    private String token;
+
     @Before
     public void setUp() {
         userClient = new UserClient();
     }
 
+    @After
+    public void tearDown() {
+        if (token != null) {
+            userClient.deleteUser(token)
+                    .assertThat()
+                    .body("message", equalTo("User successfully removed"));
+        }
+    }
+
     @Test
     public void userShouldBeCreated() {
 
-        // Создание валидного пользователя
+        // Регистрация валидного пользователя
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -28,12 +43,24 @@ public class UserCreateTest {
                 .and()
                 .body("success", equalTo(true));
 
-        // Попытка создать уже созданного пользователя
-        userClient.createUser(randomUser)
+        UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
+
+        // логин с сохранением токена
+        token = userClient.loginUser(userLoginRequest)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("accessToken", Matchers.notNullValue())
+                .extract()
+                .path("accessToken");
+
+       // Попытка создать уже созданного пользователя
+       userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_FORBIDDEN)
                 .and()
                 .body("message", equalTo("User already exists"));
+
     }
 
     @Test

@@ -15,7 +15,10 @@ public class UserClient extends RestClient {
 
     public static final String USER_LOGIN = "/api/auth/login/";
 
-    public static final String USER_DELETE = "/api/auth/login/{token}";
+
+    public static final String USER_DELETE = "/api/auth/user";
+
+    public static final String USER_GET = "/api/auth/user";
 
     @Step
     public ValidatableResponse createUser(UserCreateRequest userCreateRequest) {
@@ -35,14 +38,23 @@ public class UserClient extends RestClient {
                 .then();
     }
 
-
-
-   /* @Step
+    @Step
     public ValidatableResponse deleteUser(String token) {
         return RestAssured.given()
-                .auth()
-                .oauth2(token)
-                .delete(USER_DELETE, token)
+                .spec(getDefaultRequestSpec())
+                .header("authorization", token)
+                .delete(USER_DELETE)
                 .then();
-    } */
+    }
+
+
+
+    @Step
+    public ValidatableResponse tokenAuth(String token) {
+        return RestAssured.given()
+                .spec(getDefaultRequestSpec())
+                .header("authorization", token)
+                .get(USER_GET)
+                .then();
+    }
 }

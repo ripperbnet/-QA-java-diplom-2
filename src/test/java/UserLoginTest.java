@@ -3,6 +3,7 @@ import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,39 +16,50 @@ public class UserLoginTest {
 
     private UserClient userClient;
 
-//    private String token;
+    private String token;
 
     @Before
     public void setUp() {
         userClient = new UserClient();
     }
 
+    @After
+    public void tearDown() {
+        if (token != null) {
+            userClient.deleteUser(token)
+                    .assertThat()
+                    .body("message", equalTo("User successfully removed"));
+        }
+    }
+
     @Test
     public void userShouldBeLogged() {
-        // Создание валидного пользователя
-        UserCreateRequest randomUser = getRandomUser();
 
+        // Регистрация валидного пользователя
+        UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true))
-                .extract()
-                .path("accessToken");
+                .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
 
-        userClient.loginUser(userLoginRequest)
+        // логин с сохранением токена
+       token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue());
+                .body("accessToken", Matchers.notNullValue())
+               .extract()
+               .path("accessToken");
     }
 
 
         @Test
         public void userShouldNotBeLogged() {
 
+        // попытка входа без email
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail(null);
         userLoginRequest.setPassword("12345");
@@ -57,6 +69,7 @@ public class UserLoginTest {
                 .and()
                 .body("message", equalTo("email or password are incorrect"));
 
+        // попытка входа без password
         userLoginRequest.setEmail("test-email@yandex.ru");
         userLoginRequest.setPassword(null);
         userClient.loginUser(userLoginRequest)
@@ -65,10 +78,4 @@ public class UserLoginTest {
                 .and()
                 .body("message", equalTo("email or password are incorrect"));
         }
-
-      //  userClient.deleteUser(token)
-     //           .assertThat()
-    //           .statusCode(200);
-
-
-    }
+}
