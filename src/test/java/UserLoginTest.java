@@ -1,17 +1,21 @@
 import client.UserClient;
 import dto.UserCreateRequest;
+import dto.UserLoginRequest;
+import generator.LoginUserRequestGenerator;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class UserLoginTest {
 
     private UserClient userClient;
 
-    private String token;
+//    private String token;
 
     @Before
     public void setUp() {
@@ -22,7 +26,8 @@ public class UserLoginTest {
     public void userShouldBeLogged() {
         // Создание валидного пользователя
         UserCreateRequest randomUser = getRandomUser();
-        token =  userClient.createUser(randomUser)
+
+        userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
@@ -30,10 +35,40 @@ public class UserLoginTest {
                 .extract()
                 .path("accessToken");
 
-        userClient.loginUser(token)
+        UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
+
+        userClient.loginUser(userLoginRequest)
                 .assertThat()
-                .statusCode(200);
+                .statusCode(SC_OK)
+                .and()
+                .body("accessToken", Matchers.notNullValue());
+    }
+
+
+        @Test
+        public void userShouldNotBeLogged() {
+
+        UserLoginRequest userLoginRequest = new UserLoginRequest();
+        userLoginRequest.setEmail(null);
+        userLoginRequest.setPassword("12345");
+        userClient.loginUser(userLoginRequest)
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .and()
+                .body("message", equalTo("email or password are incorrect"));
+
+        userLoginRequest.setEmail("test-email@yandex.ru");
+        userLoginRequest.setPassword(null);
+        userClient.loginUser(userLoginRequest)
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .and()
+                .body("message", equalTo("email or password are incorrect"));
+        }
+
+      //  userClient.deleteUser(token)
+     //           .assertThat()
+    //           .statusCode(200);
 
 
     }
-}

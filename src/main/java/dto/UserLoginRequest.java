@@ -2,23 +2,23 @@ package dto;
 
 public class UserLoginRequest {
 
-    private String accessToken;
+    private String email;
 
-    private String refreshToken;
+    private String password;
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getRefreshToken() {
-        return refreshToken;
+    public String getPassword() {
+        return password;
     }
 
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
