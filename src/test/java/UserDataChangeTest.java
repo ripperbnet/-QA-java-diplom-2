@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class UserDataChangeTest {
@@ -65,5 +66,31 @@ public class UserDataChangeTest {
                         .and()
                         .body("user.email", equalTo("changed-email@yandex.ru"))
                         .body("user.name", equalTo("changed-name"));
+    }
+
+    @Test
+    public void userDataShouldBeNotChanged() {
+        UserCreateRequest randomUser = getRandomUser();
+        userClient.createUser(randomUser)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("success", equalTo(true));
+
+        UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
+
+        token = userClient.loginUser(userLoginRequest)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("accessToken", Matchers.notNullValue())
+                .extract()
+                .path("accessToken");
+
+        userClient.updateUserWithoutToken()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .and()
+                .body("message", equalTo("You should be authorised"));
     }
 }

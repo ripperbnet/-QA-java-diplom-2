@@ -8,9 +8,6 @@ public class UserCreateRequest {
 
     private String name;
 
-    private String accessToken;
-
-    private String refreshToken;
 
     public String getEmail() {
         return email;
@@ -27,7 +24,6 @@ public class UserCreateRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-
     public String getName() {
         return name;
     }

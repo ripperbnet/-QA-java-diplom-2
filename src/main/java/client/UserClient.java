@@ -66,4 +66,12 @@ public class UserClient extends RestClient {
                 .patch(USER_UPDATE)
                 .then();
     }
+
+    @Step
+    public ValidatableResponse updateUserWithoutToken() {
+        return RestAssured.given()
+                .spec(getDefaultRequestSpec())
+                .patch(USER_UPDATE)
+                .then();
+    }
 }
