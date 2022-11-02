@@ -51,8 +51,8 @@ public class UserLoginTest {
                 .statusCode(SC_OK)
                 .and()
                 .body("accessToken", Matchers.notNullValue())
-               .extract()
-               .path("accessToken");
+                .extract()
+                .path("accessToken");
     }
 
 

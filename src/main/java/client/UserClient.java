@@ -4,10 +4,8 @@ import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 
-import static io.restassured.path.json.JsonPath.given;
 
 public class UserClient extends RestClient {
 
@@ -15,10 +13,11 @@ public class UserClient extends RestClient {
 
     public static final String USER_LOGIN = "/api/auth/login/";
 
-
     public static final String USER_DELETE = "/api/auth/user";
 
     public static final String USER_GET = "/api/auth/user";
+
+    public static final String USER_UPDATE = "/api/auth/user";
 
     @Step
     public ValidatableResponse createUser(UserCreateRequest userCreateRequest) {
@@ -55,6 +54,16 @@ public class UserClient extends RestClient {
                 .spec(getDefaultRequestSpec())
                 .header("authorization", token)
                 .get(USER_GET)
+                .then();
+    }
+
+    @Step
+    public ValidatableResponse updateUser(String token, UserLoginRequest userLoginRequest) {
+        return RestAssured.given()
+                .spec(getDefaultRequestSpec())
+                .header("authorization", token)
+                .body(userLoginRequest)
+                .patch(USER_UPDATE)
                 .then();
     }
 }

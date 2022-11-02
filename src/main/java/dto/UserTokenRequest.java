@@ -1,6 +1,6 @@
 package dto;
 
-public class UserLoginWithToken {
+public class UserTokenRequest {
 
     private String accessToken;
 

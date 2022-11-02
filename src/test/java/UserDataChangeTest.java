@@ -3,6 +3,7 @@ import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,6 +20,15 @@ public class UserDataChangeTest {
     @Before
     public void setUp() {
         userClient = new UserClient();
+    }
+
+    @After
+    public void tearDown() {
+        if (token != null) {
+            userClient.deleteUser(token)
+                    .assertThat()
+                    .body("message", equalTo("User successfully removed"));
+        }
     }
 
     @Test
@@ -44,6 +54,16 @@ public class UserDataChangeTest {
                         .assertThat()
                         .statusCode(SC_OK)
                         .and()
-                        .body("user.email", Matchers.notNullValue());
+                        .body("user.email", Matchers.notNullValue())
+                        .body("user.name", Matchers.notNullValue());
+
+        userLoginRequest.setEmail("changed-email@yandex.ru");
+        userLoginRequest.setName("changed-name");
+                userClient.updateUser(token, userLoginRequest)
+                        .assertThat()
+                        .statusCode(SC_OK)
+                        .and()
+                        .body("user.email", equalTo("changed-email@yandex.ru"))
+                        .body("user.name", equalTo("changed-name"));
     }
 }
