@@ -64,6 +64,7 @@ public class OrderCreateTest {
 
 
         OrderCreateRequest randomOrder = getRandomOrder();
+
         orderClient.createOrder(randomOrder)
                 .assertThat()
                 .statusCode(SC_OK)

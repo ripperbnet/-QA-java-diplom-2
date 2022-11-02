@@ -5,28 +5,14 @@ import java.util.List;
 
 public class OrderCreateRequest {
 
-    List<String> ingredient = new ArrayList<>();
 
+    List<String> ingredients = new ArrayList<>();
 
-
-    public List<String> getIngredient() {
-        return ingredient;
-    }
-
-    public void setIngredients(List<String> ingredient) {
-        this.ingredient = ingredient;
-    }
-
-
-
-
-    private String ingredients;
-
-    public String getIngredients() {
+    public List<String> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(String ingredients) {
+    public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
 }
