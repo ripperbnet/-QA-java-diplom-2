@@ -82,6 +82,6 @@ public class OrderCreateTestParameterized {
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("name", Matchers.notNullValue());
+                .body("name", equalTo("Бессмертный бургер"));
     }
 }
