@@ -8,13 +8,11 @@ import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
-
 import java.util.List;
 
 import static generator.CreateOrderRequestGenerator.getRandomOrder;
 import static generator.CreateUserRequestGenerator.getRandomUser;
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 
@@ -25,6 +23,8 @@ public class OrderCreateTest {
     private UserClient userClient;
 
     private String token;
+
+    private String refreshToken;
 
 
     @Before
@@ -43,14 +43,16 @@ public class OrderCreateTest {
     }
 
 
-    @Test
+    @Test // заказ с одним валидным ингредиентом
     public void orderShouldBeCreated() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        refreshToken = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("refreshToken");
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
 
@@ -70,6 +72,45 @@ public class OrderCreateTest {
                 .statusCode(SC_OK)
                 .and()
                 .body("name", equalTo("Бессмертный бургер"));
+    }
+
+    @Test // Заказ с невалидным ингредиентом
+    public void orderShouldNotBeCreated() {
+        UserCreateRequest randomUser = getRandomUser();
+        userClient.createUser(randomUser)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("success", equalTo(true));
+
+        UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
+
+        token = userClient.loginUser(userLoginRequest)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("accessToken", Matchers.notNullValue())
+                .extract()
+                .path("accessToken");
+
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
+        orderCreateRequest.setIngredients(List.of("61c0c5a71d1f82221bdaaa6f"));
+        orderClient.createOrder(orderCreateRequest)
+                .assertThat()
+                .statusCode(SC_BAD_REQUEST)
+                .and()
+                .body("message", equalTo("One or more ids provided are incorrect"));
+
+    }
+
+    @Test // Попытка заказа неавторизованным пользователем
+    public void orderWithUnauthorizedUser() {
+        OrderCreateRequest randomOrder = getRandomOrder();
+
+        orderClient.createOrder(randomOrder)
+                .assertThat()
+                .statusCode(SC_OK);
+
     }
 }
 
