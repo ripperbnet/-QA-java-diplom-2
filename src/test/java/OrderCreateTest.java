@@ -4,10 +4,13 @@ import dto.OrderCreateRequest;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+
 import java.util.List;
 
 import static generator.CreateOrderRequestGenerator.getRandomOrder;
@@ -23,9 +26,6 @@ public class OrderCreateTest {
     private UserClient userClient;
 
     private String token;
-
-    private String refreshToken;
-
 
     @Before
     public void setUp() {
@@ -43,10 +43,12 @@ public class OrderCreateTest {
     }
 
 
-    @Test // заказ с одним валидным ингредиентом
-    public void orderShouldBeCreated() {
+    @Test
+    @DisplayName("Creating an order with 1 ingredient")
+    @Description("Positive test of api /api/orders endpoint")
+    public void orderWithOneIngredientShouldBeCreated() {
         UserCreateRequest randomUser = getRandomUser();
-        refreshToken = userClient.createUser(randomUser)
+        userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
@@ -74,8 +76,24 @@ public class OrderCreateTest {
                 .body("name", equalTo("Бессмертный бургер"));
     }
 
-    @Test // Заказ с невалидным ингредиентом
-    public void orderShouldNotBeCreated() {
+    @Test
+    @DisplayName("Creating an order with unauthorized user")
+    @Description("Positive test of api /api/orders endpoint")
+    public void orderShouldBeCreatedWithUnauthorizedUser() {
+        OrderCreateRequest randomOrder = getRandomOrder();
+
+        orderClient.createOrder(randomOrder)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("success", equalTo(true));
+
+    }
+
+    @Test
+    @DisplayName("Creating an order with invalid ingredient")
+    @Description("Negative test of api /api/orders endpoint")
+    public void orderShouldBeNotCreatedWithInvalidIngredient() {
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -103,14 +121,34 @@ public class OrderCreateTest {
 
     }
 
-    @Test // Попытка заказа неавторизованным пользователем
-    public void orderWithUnauthorizedUser() {
-        OrderCreateRequest randomOrder = getRandomOrder();
-
-        orderClient.createOrder(randomOrder)
+    @Test
+    @DisplayName("Creating an order without ingredients")
+    @Description("Negative test of api /api/orders endpoint")
+    public void orderShouldBeNotCreatedWithoutIngredients() {
+        UserCreateRequest randomUser = getRandomUser();
+        userClient.createUser(randomUser)
                 .assertThat()
-                .statusCode(SC_OK);
+                .statusCode(SC_OK)
+                .and()
+                .body("success", equalTo(true));
 
+        UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
+
+        token = userClient.loginUser(userLoginRequest)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("accessToken", Matchers.notNullValue())
+                .extract()
+                .path("accessToken");
+
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
+        orderCreateRequest.setIngredients(List.of());
+        orderClient.createOrder(orderCreateRequest)
+                .assertThat()
+                .statusCode(SC_BAD_REQUEST)
+                .and()
+                .body("message", equalTo("Ingredient ids must be provided"));
     }
 }
 

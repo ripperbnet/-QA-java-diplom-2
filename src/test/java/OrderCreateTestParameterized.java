@@ -4,10 +4,12 @@ import dto.OrderCreateRequest;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -51,11 +53,19 @@ public class OrderCreateTestParameterized {
     @Parameterized.Parameters
     public static List<List<String>> order() {
         return List.of (
-                List.of("61c0c5a71d1f82001bdaaa6f")
+                List.of("61c0c5a71d1f82001bdaaa6d", "61c0c5a71d1f82001bdaaa6f", "61c0c5a71d1f82001bdaaa70", "61c0c5a71d1f82001bdaaa71"),
+                List.of("61c0c5a71d1f82001bdaaa7a", "61c0c5a71d1f82001bdaaa78", "61c0c5a71d1f82001bdaaa77"),
+                List.of("61c0c5a71d1f82001bdaaa76", "61c0c5a71d1f82001bdaaa75", "61c0c5a71d1f82001bdaaa6c"),
+                List.of("61c0c5a71d1f82001bdaaa74", "61c0c5a71d1f82001bdaaa73"),
+                List.of("61c0c5a71d1f82001bdaaa6e", "61c0c5a71d1f82001bdaaa72")
         );
     }
 
+
+
     @Test
+    @DisplayName("Parameterized test, creating orders with different ingredients")
+    @Description("Positive tests of api /api/orders endpoint")
     public void orderShouldBeCreated() {
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
@@ -82,6 +92,6 @@ public class OrderCreateTestParameterized {
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("name", equalTo("Бессмертный бургер"));
+                .body("success", equalTo(true));
     }
 }

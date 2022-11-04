@@ -9,22 +9,19 @@ import io.restassured.response.ValidatableResponse;
 
 public class UserClient extends RestClient {
 
-    public static final String USER = "/api/auth/register";
+    public static final String AUTH_REGISTER = "/api/auth/register";
 
-    public static final String USER_LOGIN = "/api/auth/login/";
+    public static final String AUTH_LOGIN = "/api/auth/login/";
 
-    public static final String USER_DELETE = "/api/auth/user";
+    public static final String AUTH_USER = "/api/auth/user";
 
-    public static final String USER_GET = "/api/auth/user";
-
-    public static final String USER_UPDATE = "/api/auth/user";
 
     @Step
     public ValidatableResponse createUser(UserCreateRequest userCreateRequest) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
                 .body(userCreateRequest)
-                .post(USER)
+                .post(AUTH_REGISTER)
                 .then();
     }
 
@@ -33,7 +30,7 @@ public class UserClient extends RestClient {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
                 .body(userLoginRequest)
-                .post(USER_LOGIN)
+                .post(AUTH_LOGIN)
                 .then();
     }
 
@@ -42,18 +39,7 @@ public class UserClient extends RestClient {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
                 .header("authorization", token)
-                .delete(USER_DELETE)
-                .then();
-    }
-
-
-
-    @Step
-    public ValidatableResponse tokenAuth(String token) {
-        return RestAssured.given()
-                .spec(getDefaultRequestSpec())
-                .header("authorization", token)
-                .get(USER_GET)
+                .delete(AUTH_USER)
                 .then();
     }
 
@@ -63,15 +49,16 @@ public class UserClient extends RestClient {
                 .spec(getDefaultRequestSpec())
                 .header("authorization", token)
                 .body(userLoginRequest)
-                .patch(USER_UPDATE)
+                .patch(AUTH_USER)
                 .then();
     }
 
     @Step
-    public ValidatableResponse updateUserWithoutToken() {
+    public ValidatableResponse updateUserWithoutToken(UserLoginRequest userLoginRequest) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
-                .patch(USER_UPDATE)
+                .body(userLoginRequest)
+                .patch(AUTH_USER)
                 .then();
     }
 }

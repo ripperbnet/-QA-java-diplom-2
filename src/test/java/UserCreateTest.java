@@ -2,10 +2,12 @@ import client.UserClient;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_FORBIDDEN;
@@ -33,6 +35,8 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Creating a valid user then trying to create the same user")
+    @Description("Positive and negative test of api /api/auth/register endpoint")
     public void userShouldBeCreated() {
 
         // Регистрация валидного пользователя
@@ -64,9 +68,10 @@ public class UserCreateTest {
     }
 
     @Test
-    public void userShouldNotBeCreated() {
+    @DisplayName("Creating an invalid user without email")
+    @Description("Negative test of api /api/auth/register endpoint")
+    public void emailFieldShouldBeValidated() {
 
-        // Регистрация пользователя без email
         UserCreateRequest userCreateRequest = new UserCreateRequest();
         userCreateRequest.setEmail(null);
         userCreateRequest.setName("test-name");
@@ -76,9 +81,15 @@ public class UserCreateTest {
                 .statusCode(SC_FORBIDDEN)
                 .and()
                 .body("message", equalTo("Email, password and name are required fields"));
+    }
 
-        // Регистрация пользователя без name
-        userCreateRequest.setEmail("test-email@yandex.ru");
+    @Test
+    @DisplayName("Creating an invalid user without name")
+    @Description("Negative test of api /api/auth/register endpoint")
+    public void nameFieldShouldBeValidated() {
+
+        UserCreateRequest userCreateRequest = new UserCreateRequest();
+        userCreateRequest.setEmail("test-email333@yandex.ru");
         userCreateRequest.setName(null);
         userCreateRequest.setPassword("12345");
         userClient.createUser(userCreateRequest)
@@ -86,9 +97,15 @@ public class UserCreateTest {
                 .statusCode(SC_FORBIDDEN)
                 .and()
                 .body("message", equalTo("Email, password and name are required fields"));
+    }
 
-        // Регистрация пользователя без password
-        userCreateRequest.setEmail("test-email@yandex.ru");
+    @Test
+    @DisplayName("Creating an invalid user without password")
+    @Description("Negative test of api /api/auth/register endpoint")
+    public void passwordFieldShouldBeValidated() {
+
+        UserCreateRequest userCreateRequest = new UserCreateRequest();
+        userCreateRequest.setEmail("test-email444@yandex.ru");
         userCreateRequest.setName("test-name");
         userCreateRequest.setPassword(null);
         userClient.createUser(userCreateRequest)

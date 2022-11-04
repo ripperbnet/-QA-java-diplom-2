@@ -2,10 +2,12 @@ import client.UserClient;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -33,9 +35,10 @@ public class UserLoginTest {
     }
 
     @Test
+    @DisplayName("Creating user and logging in")
+    @Description("Positive test of api /api/auth/login/ endpoint")
     public void userShouldBeLogged() {
 
-        // Регистрация валидного пользователя
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -45,8 +48,7 @@ public class UserLoginTest {
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
 
-        // логин с сохранением токена
-       token = userClient.loginUser(userLoginRequest)
+        token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
@@ -55,11 +57,11 @@ public class UserLoginTest {
                 .path("accessToken");
     }
 
+    @Test
+    @DisplayName("Trying to login without email")
+    @Description("Negative test of api /api/auth/login/ endpoint")
+    public void emailFieldShouldBeValidated() {
 
-        @Test
-        public void userShouldNotBeLogged() {
-
-        // попытка входа без email
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail(null);
         userLoginRequest.setPassword("12345");
@@ -68,8 +70,14 @@ public class UserLoginTest {
                 .statusCode(SC_UNAUTHORIZED)
                 .and()
                 .body("message", equalTo("email or password are incorrect"));
+    }
 
-        // попытка входа без password
+    @Test
+    @DisplayName("Trying to login without password")
+    @Description("Negative test of api /api/auth/login/ endpoint")
+    public void passwordFieldShouldBeValidated() {
+
+        UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail("test-email@yandex.ru");
         userLoginRequest.setPassword(null);
         userClient.loginUser(userLoginRequest)
@@ -77,5 +85,5 @@ public class UserLoginTest {
                 .statusCode(SC_UNAUTHORIZED)
                 .and()
                 .body("message", equalTo("email or password are incorrect"));
-        }
+    }
 }

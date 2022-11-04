@@ -1,6 +1,5 @@
 package generator;
 
-import client.UserClient;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 
