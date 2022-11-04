@@ -10,10 +10,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-
 import java.util.List;
 
-import static generator.CreateOrderRequestGenerator.getRandomOrder;
+import static generator.CreateOrderRequestGenerator.getOneIngredient;
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -42,19 +41,17 @@ public class OrderCreateTest {
         }
     }
 
-
     @Test
     @DisplayName("Creating an order with 1 ingredient")
     @Description("Positive test of api /api/orders endpoint")
     public void orderWithOneIngredientShouldBeCreated() {
+
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true))
-                .extract()
-                .path("refreshToken");
+                .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
 
@@ -67,7 +64,7 @@ public class OrderCreateTest {
                 .path("accessToken");
 
 
-        OrderCreateRequest randomOrder = getRandomOrder();
+        OrderCreateRequest randomOrder = getOneIngredient();
 
         orderClient.createOrder(randomOrder)
                 .assertThat()
@@ -80,20 +77,20 @@ public class OrderCreateTest {
     @DisplayName("Creating an order with unauthorized user")
     @Description("Positive test of api /api/orders endpoint")
     public void orderShouldBeCreatedWithUnauthorizedUser() {
-        OrderCreateRequest randomOrder = getRandomOrder();
 
+        OrderCreateRequest randomOrder = getOneIngredient();
         orderClient.createOrder(randomOrder)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
                 .body("success", equalTo(true));
-
     }
 
     @Test
     @DisplayName("Creating an order with invalid ingredient")
     @Description("Negative test of api /api/orders endpoint")
     public void orderShouldBeNotCreatedWithInvalidIngredient() {
+
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -125,6 +122,7 @@ public class OrderCreateTest {
     @DisplayName("Creating an order without ingredients")
     @Description("Negative test of api /api/orders endpoint")
     public void orderShouldBeNotCreatedWithoutIngredients() {
+
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()

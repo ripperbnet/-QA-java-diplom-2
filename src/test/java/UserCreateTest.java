@@ -39,7 +39,6 @@ public class UserCreateTest {
     @Description("Positive and negative test of api /api/auth/register endpoint")
     public void userShouldBeCreated() {
 
-        // Регистрация валидного пользователя
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -49,7 +48,6 @@ public class UserCreateTest {
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
 
-        // логин с сохранением токена
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
@@ -58,7 +56,6 @@ public class UserCreateTest {
                 .extract()
                 .path("accessToken");
 
-       // Попытка создать уже созданного пользователя
        userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_FORBIDDEN)

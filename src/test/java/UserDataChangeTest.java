@@ -38,6 +38,7 @@ public class UserDataChangeTest {
     @DisplayName("Changing email data")
     @Description("Positive test of api /api/auth/user endpoint")
     public void emailFieldShouldBeChanged() {
+
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -85,7 +86,6 @@ public class UserDataChangeTest {
                 .path("accessToken");
 
         userLoginRequest.setName("changed-name");
-        userLoginRequest.setEmail("changed-email@yandex.ru");
         userClient.updateUser(token, userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
@@ -115,6 +115,7 @@ public class UserDataChangeTest {
                 .path("accessToken");
 
         userLoginRequest.setName("changed-name");
+        userLoginRequest.setEmail("changed-email@yandex.ru");
         userClient.updateUserWithoutToken(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_UNAUTHORIZED)

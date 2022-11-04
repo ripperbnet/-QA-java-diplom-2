@@ -10,30 +10,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import java.util.List;
 
 import static generator.CreateOrderRequestGenerator.getOneIngredient;
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-@RunWith(Parameterized.class)
-public class OrderCreateTestParameterized {
+public class GetOrdersDataTest {
 
     private OrderClient orderClient;
 
     private UserClient userClient;
 
     private String token;
-
-    private List<String> order;
-
-    public OrderCreateTestParameterized(List<String> order) {
-        this.order = order;
-    }
 
     @Before
     public void setUp() {
@@ -50,21 +40,10 @@ public class OrderCreateTestParameterized {
         }
     }
 
-    @Parameterized.Parameters
-    public static List<List<String>> order() {
-        return List.of (
-                List.of("61c0c5a71d1f82001bdaaa6d", "61c0c5a71d1f82001bdaaa6f", "61c0c5a71d1f82001bdaaa70", "61c0c5a71d1f82001bdaaa71"),
-                List.of("61c0c5a71d1f82001bdaaa7a", "61c0c5a71d1f82001bdaaa78", "61c0c5a71d1f82001bdaaa77"),
-                List.of("61c0c5a71d1f82001bdaaa76", "61c0c5a71d1f82001bdaaa75", "61c0c5a71d1f82001bdaaa6c"),
-                List.of("61c0c5a71d1f82001bdaaa74", "61c0c5a71d1f82001bdaaa73"),
-                List.of("61c0c5a71d1f82001bdaaa6e", "61c0c5a71d1f82001bdaaa72")
-        );
-    }
-
     @Test
-    @DisplayName("Parameterized test, creating orders with different ingredients")
-    @Description("Positive tests of api /api/orders endpoint")
-    public void orderShouldBeCreated() {
+    @DisplayName("Checking order list on authorized user")
+    @Description("Positive test of api /api/orders endpoint")
+    public void orderListShouldBeDisplayed() {
 
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
@@ -84,12 +63,29 @@ public class OrderCreateTestParameterized {
                 .path("accessToken");
 
         OrderCreateRequest randomOrder = getOneIngredient();
-        OrderCreateRequest orderCreateRequest  = new OrderCreateRequest();
-        orderCreateRequest.setIngredients(order);
+
         orderClient.createOrder(randomOrder)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("name", equalTo("Бессмертный бургер"));
+
+        orderClient.getOrderData(token)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("orders._id", Matchers.notNullValue());
+    }
+
+    @Test
+    @DisplayName("Checking order list on unauthorized user")
+    @Description("Negative test of api /api/orders endpoint")
+    public void OrderListShouldBeNotDisplayed() {
+
+        orderClient.getOrderDataWithoutToken()
+                .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
+                .and()
+                .body("message", equalTo("You should be authorised"));
     }
 }
