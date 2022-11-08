@@ -62,8 +62,8 @@ public class OrderCreateTestParameterized {
     }
 
     @Test
-    @DisplayName("Parameterized test, creating orders with different ingredients")
-    @Description("Positive tests of api /api/orders endpoint")
+    @DisplayName("Параметризованный тест, создание заказов с разным кол-вом ингредиентов")
+    @Description("Позитивный тест ручки /api/orders")
     public void orderShouldBeCreated() {
 
         UserCreateRequest randomUser = getRandomUser();

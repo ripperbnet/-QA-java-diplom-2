@@ -35,8 +35,8 @@ public class UserLoginTest {
     }
 
     @Test
-    @DisplayName("Creating user and logging in")
-    @Description("Positive test of api /api/auth/login/ endpoint")
+    @DisplayName("Логин под существующим пользователем")
+    @Description("Позитивный тест ручки /api/auth/login/")
     public void userShouldBeLogged() {
 
         UserCreateRequest randomUser = getRandomUser();
@@ -58,8 +58,8 @@ public class UserLoginTest {
     }
 
     @Test
-    @DisplayName("Trying to login without email")
-    @Description("Negative test of api /api/auth/login/ endpoint")
+    @DisplayName("Логин без ввода почты")
+    @Description("Негативный тест ручки /api/auth/login/")
     public void emailFieldShouldBeValidated() {
 
         UserLoginRequest userLoginRequest = new UserLoginRequest();
@@ -73,8 +73,8 @@ public class UserLoginTest {
     }
 
     @Test
-    @DisplayName("Trying to login without password")
-    @Description("Negative test of api /api/auth/login/ endpoint")
+    @DisplayName("Логин без ввода пароля")
+    @Description("Негативный тест ручки /api/auth/login/")
     public void passwordFieldShouldBeValidated() {
 
         UserLoginRequest userLoginRequest = new UserLoginRequest();

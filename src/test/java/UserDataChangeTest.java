@@ -35,8 +35,8 @@ public class UserDataChangeTest {
     }
 
     @Test
-    @DisplayName("Changing email data")
-    @Description("Positive test of api /api/auth/user endpoint")
+    @DisplayName("Изменение почты пользователя с авторизацией")
+    @Description("Позитивный тест ручки /api/auth/user")
     public void emailFieldShouldBeChanged() {
 
         UserCreateRequest randomUser = getRandomUser();
@@ -65,8 +65,8 @@ public class UserDataChangeTest {
     }
 
     @Test
-    @DisplayName("Changing name data")
-    @Description("Positive test of api /api/auth/user endpoint")
+    @DisplayName("Изменение имени пользователя с авторизацией")
+    @Description("Позитивный тест ручки /api/auth/user")
     public void nameFieldShouldBeChanged() {
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
@@ -94,8 +94,8 @@ public class UserDataChangeTest {
     }
 
     @Test
-    @DisplayName("Updating user without token")
-    @Description("Negative test of api /api/auth/user endpoint")
+    @DisplayName("Изменение почты и пароля без авторизации по токену")
+    @Description("Негативный тест ручки /api/auth/user")
     public void userDataShouldBeNotChanged() {
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)

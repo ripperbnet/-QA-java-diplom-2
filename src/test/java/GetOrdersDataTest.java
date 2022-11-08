@@ -41,8 +41,8 @@ public class GetOrdersDataTest {
     }
 
     @Test
-    @DisplayName("Checking order list on authorized user")
-    @Description("Positive test of api /api/orders endpoint")
+    @DisplayName("Получение списка заказов под авторизованным пользователем")
+    @Description("Позитивный тест ручки /api/orders")
     public void orderListShouldBeDisplayed() {
 
         UserCreateRequest randomUser = getRandomUser();
@@ -78,8 +78,8 @@ public class GetOrdersDataTest {
     }
 
     @Test
-    @DisplayName("Checking order list on unauthorized user")
-    @Description("Negative test of api /api/orders endpoint")
+    @DisplayName("Получение списка заказов под неавторизованным пользователем")
+    @Description("Негативный тест /api/orders ручки")
     public void OrderListShouldBeNotDisplayed() {
 
         orderClient.getOrderDataWithoutToken()

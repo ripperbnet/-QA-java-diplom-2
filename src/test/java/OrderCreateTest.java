@@ -42,8 +42,8 @@ public class OrderCreateTest {
     }
 
     @Test
-    @DisplayName("Creating an order with 1 ingredient")
-    @Description("Positive test of api /api/orders endpoint")
+    @DisplayName("Создание заказа с одним ингредиентом, пользователь авторизован")
+    @Description("Позитивный тест ручки /api/orders")
     public void orderWithOneIngredientShouldBeCreated() {
 
         UserCreateRequest randomUser = getRandomUser();
@@ -74,8 +74,8 @@ public class OrderCreateTest {
     }
 
     @Test
-    @DisplayName("Creating an order with unauthorized user")
-    @Description("Positive test of api /api/orders endpoint")
+    @DisplayName("Создание заказа под неавторизованным пользователем")
+    @Description("Позитивный тест ручки /api/orders")
     public void orderShouldBeCreatedWithUnauthorizedUser() {
 
         OrderCreateRequest randomOrder = getOneIngredient();
@@ -87,8 +87,8 @@ public class OrderCreateTest {
     }
 
     @Test
-    @DisplayName("Creating an order with invalid ingredient")
-    @Description("Negative test of api /api/orders endpoint")
+    @DisplayName("Создание заказа с невалидным id ингредиента")
+    @Description("Негативный тест ручки /api/orders")
     public void orderShouldBeNotCreatedWithInvalidIngredient() {
 
         UserCreateRequest randomUser = getRandomUser();
@@ -119,8 +119,8 @@ public class OrderCreateTest {
     }
 
     @Test
-    @DisplayName("Creating an order without ingredients")
-    @Description("Negative test of api /api/orders endpoint")
+    @DisplayName("Создание заказа без ингредиентов")
+    @Description("Негативный тест ручки /api/orders")
     public void orderShouldBeNotCreatedWithoutIngredients() {
 
         UserCreateRequest randomUser = getRandomUser();

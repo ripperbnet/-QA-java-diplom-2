@@ -35,8 +35,8 @@ public class UserCreateTest {
     }
 
     @Test
-    @DisplayName("Creating a valid user then trying to create the same user")
-    @Description("Positive and negative test of api /api/auth/register endpoint")
+    @DisplayName("Создание валидного пользователя, попытка создать уже зарегистрированного пользователя")
+    @Description("Позитивный и негативный тесты для ручки /api/auth/register")
     public void userShouldBeCreated() {
 
         UserCreateRequest randomUser = getRandomUser();
@@ -65,8 +65,8 @@ public class UserCreateTest {
     }
 
     @Test
-    @DisplayName("Creating an invalid user without email")
-    @Description("Negative test of api /api/auth/register endpoint")
+    @DisplayName("Создание невалидного пользователя без почты")
+    @Description("Негативный тест ручки /api/auth/register")
     public void emailFieldShouldBeValidated() {
 
         UserCreateRequest userCreateRequest = new UserCreateRequest();
@@ -81,8 +81,8 @@ public class UserCreateTest {
     }
 
     @Test
-    @DisplayName("Creating an invalid user without name")
-    @Description("Negative test of api /api/auth/register endpoint")
+    @DisplayName("Создание невалидного пользователя без имени")
+    @Description("Негативный тест ручки /api/auth/register")
     public void nameFieldShouldBeValidated() {
 
         UserCreateRequest userCreateRequest = new UserCreateRequest();
@@ -97,8 +97,8 @@ public class UserCreateTest {
     }
 
     @Test
-    @DisplayName("Creating an invalid user without password")
-    @Description("Negative test of api /api/auth/register endpoint")
+    @DisplayName("Создание невалидного пользователя без пароля")
+    @Description("Негативный тест ручки /api/auth/register")
     public void passwordFieldShouldBeValidated() {
 
         UserCreateRequest userCreateRequest = new UserCreateRequest();
