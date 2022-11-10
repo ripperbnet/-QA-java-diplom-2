@@ -5,8 +5,17 @@ import java.util.List;
 
 public class OrderCreateRequest {
 
+    public String ingredient;
 
-    List<String> ingredients = new ArrayList<>();
+    public String getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(String ingredient) {
+        this.ingredient = ingredient;
+    }
+
+      List<String> ingredients = new ArrayList<>();
 
     public List<String> getIngredients() {
         return ingredients;

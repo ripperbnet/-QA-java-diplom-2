@@ -25,6 +25,8 @@ public class GetOrdersDataTest {
 
     private String token;
 
+    private String ingredientId;
+
     @Before
     public void setUp() {
         orderClient = new OrderClient();
@@ -44,7 +46,6 @@ public class GetOrdersDataTest {
     @DisplayName("Получение списка заказов под авторизованным пользователем")
     @Description("Позитивный тест ручки /api/orders")
     public void orderListShouldBeDisplayed() {
-
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -62,13 +63,21 @@ public class GetOrdersDataTest {
                 .extract()
                 .path("accessToken");
 
-        OrderCreateRequest randomOrder = getOneIngredient();
-
-        orderClient.createOrder(randomOrder)
+        ingredientId = orderClient.getIngredients()
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("name", equalTo("Бессмертный бургер"));
+                .body("data[0]._id", Matchers.notNullValue())
+                .extract()
+                .path("data[0]._id");
+
+        OrderCreateRequest randomOrder = getOneIngredient(ingredientId);
+
+        orderClient.createOrder(randomOrder, token)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("name", equalTo("Флюоресцентный бургер"));
 
         orderClient.getOrderData(token)
                 .assertThat()
@@ -81,7 +90,6 @@ public class GetOrdersDataTest {
     @DisplayName("Получение списка заказов под неавторизованным пользователем")
     @Description("Негативный тест /api/orders ручки")
     public void OrderListShouldBeNotDisplayed() {
-
         orderClient.getOrderDataWithoutToken()
                 .assertThat()
                 .statusCode(SC_UNAUTHORIZED)

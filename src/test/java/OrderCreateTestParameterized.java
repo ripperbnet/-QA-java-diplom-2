@@ -15,6 +15,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.List;
 
+import static generator.CreateOrderRequestGenerator.getIngredients;
 import static generator.CreateOrderRequestGenerator.getOneIngredient;
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -30,6 +31,8 @@ public class OrderCreateTestParameterized {
     private String token;
 
     private List<String> order;
+
+    private List<String> ingredientsId;
 
     public OrderCreateTestParameterized(List<String> order) {
         this.order = order;
@@ -53,11 +56,11 @@ public class OrderCreateTestParameterized {
     @Parameterized.Parameters
     public static List<List<String>> order() {
         return List.of (
-                List.of("61c0c5a71d1f82001bdaaa6d", "61c0c5a71d1f82001bdaaa6f", "61c0c5a71d1f82001bdaaa70", "61c0c5a71d1f82001bdaaa71"),
-                List.of("61c0c5a71d1f82001bdaaa7a", "61c0c5a71d1f82001bdaaa78", "61c0c5a71d1f82001bdaaa77"),
-                List.of("61c0c5a71d1f82001bdaaa76", "61c0c5a71d1f82001bdaaa75", "61c0c5a71d1f82001bdaaa6c"),
-                List.of("61c0c5a71d1f82001bdaaa74", "61c0c5a71d1f82001bdaaa73"),
-                List.of("61c0c5a71d1f82001bdaaa6e", "61c0c5a71d1f82001bdaaa72")
+                List.of("data[0]._id", "data[1]._id", "data[2]._id", "data[3]._id"),
+                List.of("data[4]._id", "data[5]._id", "data[6]._id"),
+                List.of("data[7]._id", "data[8]._id", "data[9]._id"),
+                List.of("data[10]._id", "data[11]._id"),
+                List.of("data[12]._id", "data[13]._id")
         );
     }
 
@@ -83,10 +86,18 @@ public class OrderCreateTestParameterized {
                 .extract()
                 .path("accessToken");
 
-        OrderCreateRequest randomOrder = getOneIngredient();
+        ingredientsId = orderClient.getIngredients()
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("data[5]._id", Matchers.notNullValue())
+                .extract()
+                .path("data._id");
+
+        OrderCreateRequest randomOrder = getIngredients(ingredientsId);
         OrderCreateRequest orderCreateRequest  = new OrderCreateRequest();
         orderCreateRequest.setIngredients(order);
-        orderClient.createOrder(randomOrder)
+        orderClient.createOrder(randomOrder, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
