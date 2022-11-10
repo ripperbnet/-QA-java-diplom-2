@@ -17,7 +17,6 @@ public class OrderClient extends RestClient {
     public ValidatableResponse getIngredients() {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
-           //     .header("authorization", token)
                 .get(API_INGREDIENTS)
                 .then();
     }

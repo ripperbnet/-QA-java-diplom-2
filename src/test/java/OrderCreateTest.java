@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 
+import java.util.List;
+
 import static generator.CreateOrderRequestGenerator.getOneIngredient;
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.*;
@@ -26,6 +28,8 @@ public class OrderCreateTest {
     private String token;
 
     private String ingredientId;
+
+
 
     @Before
     public void setUp() {
@@ -111,7 +115,6 @@ public class OrderCreateTest {
                 .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
@@ -121,7 +124,7 @@ public class OrderCreateTest {
                 .path("accessToken");
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
-        orderCreateRequest.setIngredient("60d3b41abdacab0026a733c6");
+        orderCreateRequest.setIngredients(List.of("111111111111111111111111"));
         orderClient.createOrder(orderCreateRequest, token)
                 .assertThat()
                 .statusCode(SC_BAD_REQUEST)
@@ -142,7 +145,6 @@ public class OrderCreateTest {
                 .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
