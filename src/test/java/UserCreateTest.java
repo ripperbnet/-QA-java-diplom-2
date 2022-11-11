@@ -2,12 +2,12 @@ import client.UserClient;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_FORBIDDEN;
@@ -39,27 +39,26 @@ public class UserCreateTest {
     @Description("Позитивный и негативный тесты для ручки /api/auth/register")
     public void userShouldBeCreated() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");;
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
+        userClient.loginUser(userLoginRequest, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue())
-                .extract()
-                .path("accessToken");
+                .body("accessToken", Matchers.notNullValue());
 
        userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_FORBIDDEN)
                 .and()
                 .body("message", equalTo("User already exists"));
-
     }
 
     @Test
@@ -70,11 +69,13 @@ public class UserCreateTest {
         userCreateRequest.setEmail(null);
         userCreateRequest.setName("test-name");
         userCreateRequest.setPassword("12345");
-        userClient.createUser(userCreateRequest)
+        token = userClient.createUser(userCreateRequest)
                 .assertThat()
                 .statusCode(SC_FORBIDDEN)
                 .and()
-                .body("message", equalTo("Email, password and name are required fields"));
+                .body("message", equalTo("Email, password and name are required fields"))
+                .extract()
+                .path("accessToken");
     }
 
     @Test
@@ -85,11 +86,13 @@ public class UserCreateTest {
         userCreateRequest.setEmail("test-email333@yandex.ru");
         userCreateRequest.setName(null);
         userCreateRequest.setPassword("12345");
-        userClient.createUser(userCreateRequest)
+        token = userClient.createUser(userCreateRequest)
                 .assertThat()
                 .statusCode(SC_FORBIDDEN)
                 .and()
-                .body("message", equalTo("Email, password and name are required fields"));
+                .body("message", equalTo("Email, password and name are required fields"))
+                .extract()
+                .path("accessToken");
     }
 
     @Test
@@ -100,10 +103,12 @@ public class UserCreateTest {
         userCreateRequest.setEmail("test-email444@yandex.ru");
         userCreateRequest.setName("test-name");
         userCreateRequest.setPassword(null);
-        userClient.createUser(userCreateRequest)
+        token = userClient.createUser(userCreateRequest)
                 .assertThat()
                 .statusCode(SC_FORBIDDEN)
                 .and()
-                .body("message", equalTo("Email, password and name are required fields"));
+                .body("message", equalTo("Email, password and name are required fields"))
+                .extract()
+                .path("accessToken");
     }
 }

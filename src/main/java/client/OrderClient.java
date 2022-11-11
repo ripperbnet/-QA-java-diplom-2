@@ -11,7 +11,7 @@ public class OrderClient extends RestClient {
 
     public final String API_INGREDIENTS = "/api/ingredients";
 
-    @Step
+    @Step("Получение списка ингредиентов")
     public ValidatableResponse getIngredients() {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
@@ -19,7 +19,7 @@ public class OrderClient extends RestClient {
                 .then();
     }
 
-    @Step
+    @Step("Создание заказа")
     public ValidatableResponse createOrder(OrderCreateRequest orderCreateRequest, String token) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
@@ -29,7 +29,7 @@ public class OrderClient extends RestClient {
                 .then();
     }
 
-    @Step
+    @Step("Создание заказа без авторизации")
     public ValidatableResponse createOrderUnauthorized(OrderCreateRequest orderCreateRequest) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
@@ -38,7 +38,7 @@ public class OrderClient extends RestClient {
                 .then();
     }
 
-    @Step
+    @Step("Получение данных заказа")
     public ValidatableResponse getOrderData(String token) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
@@ -47,7 +47,7 @@ public class OrderClient extends RestClient {
                 .then();
     }
 
-    @Step
+    @Step("Получение данных заказа без авторизации")
     public ValidatableResponse getOrderDataWithoutToken() {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())

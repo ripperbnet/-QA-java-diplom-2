@@ -2,12 +2,12 @@ import client.UserClient;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -39,20 +39,20 @@ public class UserLoginTest {
     @Description("Позитивный тест ручки /api/auth/login/")
     public void userShouldBeLogged() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
-
-        UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
-                .assertThat()
-                .statusCode(SC_OK)
-                .and()
-                .body("accessToken", Matchers.notNullValue())
+                .body("success", equalTo(true))
                 .extract()
                 .path("accessToken");
+
+        UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
+        userClient.loginUser(userLoginRequest, token)
+                .assertThat()
+                .statusCode(SC_OK)
+                .and()
+                .body("accessToken", Matchers.notNullValue());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class UserLoginTest {
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail(null);
         userLoginRequest.setPassword("12345");
-        userClient.loginUser(userLoginRequest)
+        userClient.loginUserWithoutToken(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_UNAUTHORIZED)
                 .and()
@@ -76,7 +76,7 @@ public class UserLoginTest {
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail("test-email@yandex.ru");
         userLoginRequest.setPassword(null);
-        userClient.loginUser(userLoginRequest)
+        userClient.loginUserWithoutToken(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_UNAUTHORIZED)
                 .and()

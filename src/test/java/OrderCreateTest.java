@@ -4,12 +4,12 @@ import dto.OrderCreateRequest;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 import java.util.List;
 
 import static generator.CreateOrderRequestGenerator.getIngredients;
@@ -47,20 +47,20 @@ public class OrderCreateTest {
     @Description("Позитивный тест ручки /api/orders")
     public void orderWithOneIngredientShouldBeCreated() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");;
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
+        userClient.loginUser(userLoginRequest, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue())
-                .extract()
-                .path("accessToken");
+                .body("accessToken", Matchers.notNullValue());
 
         ingredientsId = orderClient.getIngredients()
                 .assertThat()
@@ -104,20 +104,20 @@ public class OrderCreateTest {
     @Description("Негативный тест ручки /api/orders")
     public void orderShouldBeNotCreatedWithInvalidIngredient() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");;
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
+        userClient.loginUser(userLoginRequest, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue())
-                .extract()
-                .path("accessToken");
+                .body("accessToken", Matchers.notNullValue());
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
         orderCreateRequest.setIngredients(List.of("111111111111111111111111"));
@@ -133,20 +133,20 @@ public class OrderCreateTest {
     @Description("Негативный тест ручки /api/orders")
     public void orderShouldBeNotCreatedWithoutIngredients() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");;
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
+        userClient.loginUser(userLoginRequest, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue())
-                .extract()
-                .path("accessToken");
+                .body("accessToken", Matchers.notNullValue());
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
         orderCreateRequest.setIngredients(null);

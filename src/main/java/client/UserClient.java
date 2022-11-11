@@ -15,7 +15,7 @@ public class UserClient extends RestClient {
     public static final String AUTH_USER = "/api/auth/user";
 
 
-    @Step
+    @Step("Создание пользователя")
     public ValidatableResponse createUser(UserCreateRequest userCreateRequest) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
@@ -24,8 +24,18 @@ public class UserClient extends RestClient {
                 .then();
     }
 
-    @Step
-    public ValidatableResponse loginUser(UserLoginRequest userLoginRequest) {
+    @Step("Логин пользователя")
+    public ValidatableResponse loginUser(UserLoginRequest userLoginRequest, String token) {
+        return RestAssured.given()
+                .spec(getDefaultRequestSpec())
+                .header("authorization", token)
+                .body(userLoginRequest)
+                .post(AUTH_LOGIN)
+                .then();
+    }
+
+    @Step("Логин пользователя без токена")
+    public ValidatableResponse loginUserWithoutToken(UserLoginRequest userLoginRequest) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
                 .body(userLoginRequest)
@@ -33,7 +43,7 @@ public class UserClient extends RestClient {
                 .then();
     }
 
-    @Step
+    @Step("Удаление пользователя")
     public ValidatableResponse deleteUser(String token) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
@@ -42,7 +52,7 @@ public class UserClient extends RestClient {
                 .then();
     }
 
-    @Step
+    @Step("Обновление данных пользователя")
     public ValidatableResponse updateUser(String token, UserLoginRequest userLoginRequest) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())
@@ -52,7 +62,7 @@ public class UserClient extends RestClient {
                 .then();
     }
 
-    @Step
+    @Step("Обновления данных пользователя без токена")
     public ValidatableResponse updateUserWithoutToken(UserLoginRequest userLoginRequest) {
         return RestAssured.given()
                 .spec(getDefaultRequestSpec())

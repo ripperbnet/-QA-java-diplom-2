@@ -8,7 +8,7 @@ import io.restassured.specification.RequestSpecification;
 
 public class RestClient {
 
-    @Step
+    @Step("Получение дефолтных параметров")
     public RequestSpecification getDefaultRequestSpec() {
         return new RequestSpecBuilder()
                 .setBaseUri(Config.getBaseUri())

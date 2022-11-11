@@ -2,12 +2,12 @@ import client.UserClient;
 import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
+import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -39,20 +39,20 @@ public class UserDataChangeTest {
     @Description("Позитивный тест ручки /api/auth/user")
     public void emailFieldShouldBeChanged() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");;
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
+        userClient.loginUser(userLoginRequest, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue())
-                .extract()
-                .path("accessToken");
+                .body("accessToken", Matchers.notNullValue());
 
         userLoginRequest.setEmail("changed-email@yandex.ru");
         userClient.updateUser(token, userLoginRequest)
@@ -67,20 +67,20 @@ public class UserDataChangeTest {
     @Description("Позитивный тест ручки /api/auth/user")
     public void nameFieldShouldBeChanged() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");;
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
+        userClient.loginUser(userLoginRequest, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue())
-                .extract()
-                .path("accessToken");
+                .body("accessToken", Matchers.notNullValue());
 
         userLoginRequest.setName("changed-name");
         userClient.updateUser(token, userLoginRequest)
@@ -95,20 +95,20 @@ public class UserDataChangeTest {
     @Description("Негативный тест ручки /api/auth/user")
     public void userDataShouldBeNotChanged() {
         UserCreateRequest randomUser = getRandomUser();
-        userClient.createUser(randomUser)
+        token = userClient.createUser(randomUser)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("success", equalTo(true));
+                .body("success", equalTo(true))
+                .extract()
+                .path("accessToken");;
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-        token = userClient.loginUser(userLoginRequest)
+        userClient.loginUser(userLoginRequest, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("accessToken", Matchers.notNullValue())
-                .extract()
-                .path("accessToken");
+                .body("accessToken", Matchers.notNullValue());
 
         userLoginRequest.setName("changed-name");
         userLoginRequest.setEmail("changed-email@yandex.ru");

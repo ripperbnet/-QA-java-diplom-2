@@ -5,7 +5,7 @@ import java.util.List;
 
 public class OrderCreateRequest {
 
-    List<String> ingredients = new ArrayList<>();
+    private List<String> ingredients = new ArrayList<>();
 
     public List<String> getIngredients() {
         return ingredients;
