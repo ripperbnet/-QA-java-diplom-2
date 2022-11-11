@@ -80,7 +80,7 @@ public class OrderCreateTest {
 
 
     @Test
-    @DisplayName("Создание заказа со всеми ингредиентами под не авторизованным пользователем")
+    @DisplayName("Создание заказа со всеми ингредиентами пользователь не авторизован")
     @Description("Позитивный тест ручки /api/orders")
     public void orderShouldBeCreatedWithUnauthorizedUser() {
         ingredientsId = orderClient.getIngredients()
