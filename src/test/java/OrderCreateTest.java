@@ -10,14 +10,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-
 import java.util.List;
 
-import static generator.CreateOrderRequestGenerator.getOneIngredient;
+import static generator.CreateOrderRequestGenerator.getIngredients;
 import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
-
 
 public class OrderCreateTest {
 
@@ -27,9 +25,7 @@ public class OrderCreateTest {
 
     private String token;
 
-    private String ingredientId;
-
-
+    private List<String> ingredientsId;
 
     @Before
     public void setUp() {
@@ -47,7 +43,7 @@ public class OrderCreateTest {
     }
 
     @Test
-    @DisplayName("Создание заказа с одним ингредиентом, пользователь авторизован")
+    @DisplayName("Создание заказа со всеми ингредиентами, пользователь авторизован")
     @Description("Позитивный тест ручки /api/orders")
     public void orderWithOneIngredientShouldBeCreated() {
         UserCreateRequest randomUser = getRandomUser();
@@ -66,44 +62,44 @@ public class OrderCreateTest {
                 .extract()
                 .path("accessToken");
 
-        ingredientId = orderClient.getIngredients()
+        ingredientsId = orderClient.getIngredients()
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("data[0]._id", Matchers.notNullValue())
+                .body("data._id", Matchers.notNullValue())
                 .extract()
-                .path("data[0]._id");
+                .path("data._id");
 
-        OrderCreateRequest randomOrder = getOneIngredient(ingredientId);
+        OrderCreateRequest randomOrder = getIngredients(ingredientsId);
         orderClient.createOrder(randomOrder, token)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("name", equalTo("Флюоресцентный бургер"));
+                .body("name", equalTo("Антарианский био-марсианский астероидный флюоресцентный альфа-сахаридный spicy минеральный экзо-плантаго метеоритный люминесцентный традиционный-галактический бессмертный space краторный фалленианский бургер"));
     }
 
 
     @Test
-    @DisplayName("Создание заказа под неавторизованным пользователем")
+    @DisplayName("Создание заказа со всеми ингредиентами под не авторизованным пользователем")
     @Description("Позитивный тест ручки /api/orders")
     public void orderShouldBeCreatedWithUnauthorizedUser() {
-        ingredientId = orderClient.getIngredients()
+        ingredientsId = orderClient.getIngredients()
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("data[0]._id", Matchers.notNullValue())
+                .body("data._id", Matchers.notNullValue())
                 .extract()
-                .path("data[0]._id");
+                .path("data._id");
 
-        OrderCreateRequest randomOrder = getOneIngredient(ingredientId);
+        OrderCreateRequest randomOrder = getIngredients(ingredientsId);
         orderClient.createOrderUnauthorized(randomOrder)
                 .assertThat()
                 .statusCode(SC_OK)
                 .and()
-                .body("name", equalTo("Флюоресцентный бургер"));
+                .body("name", equalTo("Антарианский био-марсианский астероидный флюоресцентный альфа-сахаридный spicy минеральный экзо-плантаго метеоритный люминесцентный традиционный-галактический бессмертный space краторный фалленианский бургер"));
     }
 
-   @Test
+    @Test
     @DisplayName("Создание заказа с невалидным id ингредиента")
     @Description("Негативный тест ручки /api/orders")
     public void orderShouldBeNotCreatedWithInvalidIngredient() {
@@ -130,7 +126,6 @@ public class OrderCreateTest {
                 .statusCode(SC_BAD_REQUEST)
                 .and()
                 .body("message", equalTo("One or more ids provided are incorrect"));
-
     }
 
     @Test
@@ -154,7 +149,7 @@ public class OrderCreateTest {
                 .path("accessToken");
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
-        orderCreateRequest.setIngredient(null);
+        orderCreateRequest.setIngredients(null);
         orderClient.createOrder(orderCreateRequest, token)
                 .assertThat()
                 .statusCode(SC_BAD_REQUEST)

@@ -5,8 +5,6 @@ import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 
-import java.util.List;
-
 public class OrderClient extends RestClient {
 
     public final String API_ORDERS = "/api/orders";

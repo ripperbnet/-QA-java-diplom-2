@@ -6,7 +6,6 @@ import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 
-
 public class UserClient extends RestClient {
 
     public static final String AUTH_REGISTER = "/api/auth/register";

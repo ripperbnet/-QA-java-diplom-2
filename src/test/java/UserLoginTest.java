@@ -38,7 +38,6 @@ public class UserLoginTest {
     @DisplayName("Логин под существующим пользователем")
     @Description("Позитивный тест ручки /api/auth/login/")
     public void userShouldBeLogged() {
-
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -47,7 +46,6 @@ public class UserLoginTest {
                 .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
@@ -61,7 +59,6 @@ public class UserLoginTest {
     @DisplayName("Логин без ввода почты")
     @Description("Негативный тест ручки /api/auth/login/")
     public void emailFieldShouldBeValidated() {
-
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail(null);
         userLoginRequest.setPassword("12345");
@@ -76,7 +73,6 @@ public class UserLoginTest {
     @DisplayName("Логин без ввода пароля")
     @Description("Негативный тест ручки /api/auth/login/")
     public void passwordFieldShouldBeValidated() {
-
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail("test-email@yandex.ru");
         userLoginRequest.setPassword(null);

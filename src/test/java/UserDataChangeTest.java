@@ -38,7 +38,6 @@ public class UserDataChangeTest {
     @DisplayName("Изменение почты пользователя с авторизацией")
     @Description("Позитивный тест ручки /api/auth/user")
     public void emailFieldShouldBeChanged() {
-
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -47,7 +46,6 @@ public class UserDataChangeTest {
                 .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
@@ -76,7 +74,6 @@ public class UserDataChangeTest {
                 .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
@@ -105,7 +102,6 @@ public class UserDataChangeTest {
                 .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)

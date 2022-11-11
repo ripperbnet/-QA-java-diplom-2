@@ -38,7 +38,6 @@ public class UserCreateTest {
     @DisplayName("Создание валидного пользователя, попытка создать уже зарегистрированного пользователя")
     @Description("Позитивный и негативный тесты для ручки /api/auth/register")
     public void userShouldBeCreated() {
-
         UserCreateRequest randomUser = getRandomUser();
         userClient.createUser(randomUser)
                 .assertThat()
@@ -47,7 +46,6 @@ public class UserCreateTest {
                 .body("success", equalTo(true));
 
         UserLoginRequest userLoginRequest = LoginUserRequestGenerator.from(randomUser);
-
         token = userClient.loginUser(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_OK)
@@ -68,7 +66,6 @@ public class UserCreateTest {
     @DisplayName("Создание невалидного пользователя без почты")
     @Description("Негативный тест ручки /api/auth/register")
     public void emailFieldShouldBeValidated() {
-
         UserCreateRequest userCreateRequest = new UserCreateRequest();
         userCreateRequest.setEmail(null);
         userCreateRequest.setName("test-name");
@@ -84,7 +81,6 @@ public class UserCreateTest {
     @DisplayName("Создание невалидного пользователя без имени")
     @Description("Негативный тест ручки /api/auth/register")
     public void nameFieldShouldBeValidated() {
-
         UserCreateRequest userCreateRequest = new UserCreateRequest();
         userCreateRequest.setEmail("test-email333@yandex.ru");
         userCreateRequest.setName(null);
@@ -100,7 +96,6 @@ public class UserCreateTest {
     @DisplayName("Создание невалидного пользователя без пароля")
     @Description("Негативный тест ручки /api/auth/register")
     public void passwordFieldShouldBeValidated() {
-
         UserCreateRequest userCreateRequest = new UserCreateRequest();
         userCreateRequest.setEmail("test-email444@yandex.ru");
         userCreateRequest.setName("test-name");
