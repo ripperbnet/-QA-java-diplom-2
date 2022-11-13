@@ -7,9 +7,9 @@ import io.restassured.response.ValidatableResponse;
 
 public class OrderClient extends RestClient {
 
-    public final String API_ORDERS = "/api/orders";
+    private static final String API_ORDERS = "/api/orders";
 
-    public final String API_INGREDIENTS = "/api/ingredients";
+    private static final String API_INGREDIENTS = "/api/ingredients";
 
     @Step("Получение списка ингредиентов")
     public ValidatableResponse getIngredients() {

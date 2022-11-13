@@ -8,11 +8,11 @@ import io.restassured.response.ValidatableResponse;
 
 public class UserClient extends RestClient {
 
-    public static final String AUTH_REGISTER = "/api/auth/register";
+    private static final String AUTH_REGISTER = "/api/auth/register";
 
-    public static final String AUTH_LOGIN = "/api/auth/login/";
+    private static final String AUTH_LOGIN = "/api/auth/login/";
 
-    public static final String AUTH_USER = "/api/auth/user";
+    private static final String AUTH_USER = "/api/auth/user";
 
 
     @Step("Создание пользователя")

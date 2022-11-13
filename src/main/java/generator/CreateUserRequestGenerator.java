@@ -9,7 +9,7 @@ public class CreateUserRequestGenerator {
         UserCreateRequest userCreateRequest = new UserCreateRequest();
         userCreateRequest.setName("test-client" + RandomStringUtils.randomNumeric(4));
         userCreateRequest.setEmail("test-email" + RandomStringUtils.randomNumeric(4) + "@yandex.ru");
-        userCreateRequest.setPassword("12345");
+        userCreateRequest.setPassword("123456");
         return userCreateRequest;
     }
 }

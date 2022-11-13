@@ -62,11 +62,13 @@ public class UserLoginTest {
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail(null);
         userLoginRequest.setPassword("12345");
-        userClient.loginUserWithoutToken(userLoginRequest)
+        token = userClient.loginUserWithoutToken(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_UNAUTHORIZED)
                 .and()
-                .body("message", equalTo("email or password are incorrect"));
+                .body("message", equalTo("email or password are incorrect"))
+                .extract()
+                .path("accessToken");
     }
 
     @Test
@@ -76,10 +78,12 @@ public class UserLoginTest {
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail("test-email@yandex.ru");
         userLoginRequest.setPassword(null);
-        userClient.loginUserWithoutToken(userLoginRequest)
+        token = userClient.loginUserWithoutToken(userLoginRequest)
                 .assertThat()
                 .statusCode(SC_UNAUTHORIZED)
                 .and()
-                .body("message", equalTo("email or password are incorrect"));
+                .body("message", equalTo("email or password are incorrect"))
+                .extract()
+                .path("accessToken");
     }
 }
