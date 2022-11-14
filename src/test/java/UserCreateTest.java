@@ -3,6 +3,7 @@ import dto.UserCreateRequest;
 import dto.UserLoginRequest;
 import generator.LoginUserRequestGenerator;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.Response;
 import jdk.jfr.Description;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -13,6 +14,7 @@ import static generator.CreateUserRequestGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_FORBIDDEN;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
 public class UserCreateTest {
 
@@ -64,18 +66,15 @@ public class UserCreateTest {
     @Test
     @DisplayName("Создание невалидного пользователя без почты")
     @Description("Негативный тест ручки /api/auth/register")
-    public void emailFieldShouldBeValidated() {
+    public void emailFieldShouldBeValidated(){
         UserCreateRequest userCreateRequest = new UserCreateRequest();
         userCreateRequest.setEmail(null);
         userCreateRequest.setName("test-name");
         userCreateRequest.setPassword("12345");
-        token = userClient.createUser(userCreateRequest)
-                .assertThat()
-                .statusCode(SC_FORBIDDEN)
-                .and()
-                .body("message", equalTo("Email, password and name are required fields"))
-                .extract()
-                .path("accessToken");
+        Response response = userClient.createUserResponse(userCreateRequest);
+        assertEquals(403, response.statusCode());
+        assertEquals("Email, password and name are required fields",response.path("message"));
+        token = response.path("accessToken");
     }
 
     @Test
@@ -86,13 +85,10 @@ public class UserCreateTest {
         userCreateRequest.setEmail("test-email333@yandex.ru");
         userCreateRequest.setName(null);
         userCreateRequest.setPassword("12345");
-        token = userClient.createUser(userCreateRequest)
-                .assertThat()
-                .statusCode(SC_FORBIDDEN)
-                .and()
-                .body("message", equalTo("Email, password and name are required fields"))
-                .extract()
-                .path("accessToken");
+        Response response = userClient.createUserResponse(userCreateRequest);
+        assertEquals(403, response.statusCode());
+        assertEquals("Email, password and name are required fields",response.path("message"));
+        token = response.path("accessToken");
     }
 
     @Test
@@ -103,12 +99,9 @@ public class UserCreateTest {
         userCreateRequest.setEmail("test-email444@yandex.ru");
         userCreateRequest.setName("test-name");
         userCreateRequest.setPassword(null);
-        token = userClient.createUser(userCreateRequest)
-                .assertThat()
-                .statusCode(SC_FORBIDDEN)
-                .and()
-                .body("message", equalTo("Email, password and name are required fields"))
-                .extract()
-                .path("accessToken");
+        Response response = userClient.createUserResponse(userCreateRequest);
+        assertEquals(403, response.statusCode());
+        assertEquals("Email, password and name are required fields",response.path("message"));
+        token = response.path("accessToken");
     }
 }
