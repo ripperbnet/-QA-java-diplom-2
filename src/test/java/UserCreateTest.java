@@ -72,9 +72,9 @@ public class UserCreateTest {
         userCreateRequest.setName("test-name");
         userCreateRequest.setPassword("12345");
         Response response = userClient.createUserResponse(userCreateRequest);
+        token = response.path("accessToken");
         assertEquals(403, response.statusCode());
         assertEquals("Email, password and name are required fields",response.path("message"));
-        token = response.path("accessToken");
     }
 
     @Test
@@ -86,9 +86,9 @@ public class UserCreateTest {
         userCreateRequest.setName(null);
         userCreateRequest.setPassword("12345");
         Response response = userClient.createUserResponse(userCreateRequest);
+        token = response.path("accessToken");
         assertEquals(403, response.statusCode());
         assertEquals("Email, password and name are required fields",response.path("message"));
-        token = response.path("accessToken");
     }
 
     @Test
@@ -100,8 +100,8 @@ public class UserCreateTest {
         userCreateRequest.setName("test-name");
         userCreateRequest.setPassword(null);
         Response response = userClient.createUserResponse(userCreateRequest);
+        token = response.path("accessToken");
         assertEquals(403, response.statusCode());
         assertEquals("Email, password and name are required fields",response.path("message"));
-        token = response.path("accessToken");
     }
 }
